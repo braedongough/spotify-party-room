@@ -8,8 +8,8 @@ var socketio = require('socket.io');
 
 var { generateRandomString } = require('./utils');
 
-var client_id = 'd24d4e236f7a45b4aa433c2295bc4952'; // Your client id
-var client_secret = '4256a59a89f34610b290000aa74b7e2a'; // Your secret
+var client_id = process.env.CLIENT_ID; // Your client id
+var client_secret = process.env.CLIENT_SECRET; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 var stateKey = 'spotify_auth_state';
