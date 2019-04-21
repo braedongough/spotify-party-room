@@ -1,37 +1,24 @@
-import React, { useState, useEffect } from "react";
-import spotifyApi, { getHashParams, getUser } from "./spotifyWebApi";
-import { socket } from "./socket";
+import React from 'react';
+import spotify, { getToken } from './api/spotifyWebApi';
+import useLogin from './login/useLogin';
+import { socket } from './api/socket';
 
-// * USER is currently emitting from socket
-// todo: display array of connected users
-// ? can we get the user data from server side??
+import Search from './search/Search';
+import LoginPage from './login/LoginPage';
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const token = getHashParams().access_token;
+  const token = getToken();
+  const loggedIn = useLogin(token);
+  if (loggedIn) {
+    spotify.getMe().then(res => {
+      socket().emit('userJoined', res);
+    });
+  }
 
-  useEffect(() => {
-    if (token) {
-      spotifyApi.setAccessToken(token);
-      setLoggedIn(true);
-      getUser(token).then(user => {
-        socket().emit("userJoined", user);
-      });
-    }
-  }, [token]);
-  socket().on("usersUpdated", userArray => {
+  socket().on('usersUpdated', userArray => {
     console.log(userArray);
   });
-  return (
-    <>
-      <p>Login to spotify</p>
-      {loggedIn ? (
-        <p>logged in</p>
-      ) : (
-        <a href="http://localhost:8888/login">Login Button</a>
-      )}
-    </>
-  );
+  return loggedIn ? <Search /> : <LoginPage />;
 };
 
 export default App;

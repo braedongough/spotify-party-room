@@ -1,36 +1,30 @@
-import React from 'react';
-import { Formik } from 'formik';
+import React, { useState } from 'react';
 import debounce from 'lodash.debounce';
 import spotify from '../api/spotifyWebApi';
+import SearchForm from './SearchForm';
+import TrackList from './TrackList';
 
 const Search = () => {
+  const [tracks, setTracks] = useState([]);
   const handleSearch = debounce(async (query = '') => {
-    const search = await spotify.searchTracks(query, { limit: 10 });
-    console.log(search);
-  }, 2000);
+    if (query) {
+      const search = await spotify.searchTracks(query, { limit: 10 });
+
+      setTracks([...search.tracks.items]);
+    } else {
+      setTracks([]);
+    }
+  }, 200);
   const handleChange = e => {
     const query = e.target.value;
     handleSearch(query);
   };
-
+  console.log(tracks);
   return (
-    <Formik
-      initialValues={{ searchQuery: '', test: '' }}
-      render={({ values, setFieldValue }) => (
-        <form>
-          <input
-            name="searchQuery"
-            type="text"
-            value={values.searchQuery}
-            onChange={e => {
-              setFieldValue('searchQuery', e.target.value);
-              handleChange(e);
-            }}
-            placeholder="search spotify"
-          />
-        </form>
-      )}
-    />
+    <>
+      <SearchForm handleChange={handleChange} />
+      <TrackList tracks={tracks} />
+    </>
   );
 };
 
