@@ -1,4 +1,5 @@
 import SpotifyWebApi from 'spotify-web-api-js';
+import axios from 'axios';
 
 export const getToken = () => {
   var hashParams = {};
@@ -11,6 +12,12 @@ export const getToken = () => {
     e = r.exec(q);
   }
   return hashParams.access_token;
+};
+
+export const loadNextQuery = (token, nextQuery) => {
+  return axios.get(nextQuery, {
+    headers: { Authorization: 'Bearer ' + token },
+  });
 };
 
 const spotifyApi = new SpotifyWebApi();

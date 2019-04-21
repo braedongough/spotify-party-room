@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import debounce from 'lodash.debounce';
-import spotify from '../api/spotifyWebApi';
+import spotify, { loadNextQuery } from '../api/spotifyWebApi';
 import SearchForm from './SearchForm';
 import TrackList from './TrackList';
 
-const Search = () => {
+const Search = ({ token }) => {
   const [tracks, setTracks] = useState([]);
+  const [nextQuery, setNextQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleSearch = debounce(async (query = '') => {
     if (query) {
+      setLoading(true);
       const search = await spotify.searchTracks(query, { limit: 10 });
 
+      setNextQuery(search.tracks.next);
       setTracks([...search.tracks.items]);
+      setLoading(false);
     } else {
       setTracks([]);
     }
@@ -19,11 +25,23 @@ const Search = () => {
     const query = e.target.value;
     handleSearch(query);
   };
-  console.log(tracks);
+
+  const onLoadMore = async () => {
+    setLoading(true);
+
+    const response = await loadNextQuery(token, nextQuery);
+    const { items, next } = response.data.tracks;
+
+    setTracks(tracks.concat(items));
+
+    setNextQuery(next);
+    setLoading(false);
+  };
+
   return (
     <>
       <SearchForm handleChange={handleChange} />
-      <TrackList tracks={tracks} />
+      <TrackList tracks={tracks} onLoadMore={onLoadMore} loading={loading} />
     </>
   );
 };

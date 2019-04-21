@@ -16,9 +16,9 @@ const App = () => {
   }
 
   socket().on('usersUpdated', userArray => {
-    console.log(userArray);
+    //console.log(userArray);
   });
-  return loggedIn ? <Search /> : <LoginPage />;
+  return loggedIn ? <Search token={token} /> : <LoginPage />;
 };
 
 export default App;

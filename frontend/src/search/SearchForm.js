@@ -11,6 +11,7 @@ const SearchForm = ({ handleChange }) => {
       render={({ values, setFieldValue }) => (
         <form>
           <Search
+            allowClear
             style={{ width: 200, margin: 30 }}
             name="searchQuery"
             type="text"

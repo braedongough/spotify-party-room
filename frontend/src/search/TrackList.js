@@ -1,21 +1,44 @@
 import React from 'react';
-import { List, Avatar } from 'antd';
-import Track from './Track';
+import { List, Avatar, Button, Skeleton } from 'antd';
 
-const TrackList = ({ tracks }) => {
+const TrackList = ({ tracks, loading, onLoadMore }) => {
+  const loadMore = !loading ? (
+    <div
+      style={{
+        textAlign: 'center',
+        margin: 12,
+        height: 32,
+        lineHeight: '32px',
+      }}
+    >
+      <Button onClick={onLoadMore}>Load more</Button>
+    </div>
+  ) : null;
   return (
     <List
+      style={{
+        maxWidth: 350,
+        marginLeft: 10,
+      }}
+      bordered
+      loadMore={tracks.length > 0 && loadMore}
       itemLayout="horizontal"
       dataSource={tracks}
-      renderItem={track => (
-        <List.Item>
-          <List.Item.Meta
-            avatar={<Avatar src={track.album.images[2].url} />}
-            title={track.name}
-            description={track.artists[0].name + ' - ' + track.album.name}
-          />
-        </List.Item>
-      )}
+      loading={loading}
+      locale={{ emptyText: 'no tracks to show' }}
+      renderItem={track => {
+        return (
+          <List.Item>
+            <List.Item.Meta
+              avatar={
+                <Avatar alt="album cover" src={track.album.images[2].url} />
+              }
+              title={track.name}
+              description={track.artists[0].name + ' - ' + track.album.name}
+            />
+          </List.Item>
+        );
+      }}
     />
   );
 };
