@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Avatar, Button, Skeleton } from 'antd';
+import { List, Avatar, Button } from 'antd';
 
 const TrackList = ({ tracks, loading, onLoadMore }) => {
   const loadMore = !loading ? (
