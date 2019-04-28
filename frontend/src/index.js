@@ -4,16 +4,16 @@ import store from './redux/store';
 import { Provider } from 'react-redux';
 import './index.css';
 import initSocket from './api/socket';
-import AppRouter from './router/AppRouter';
+import App from './App';
 
-const App = () => {
+const Main = () => {
   return (
     <Provider store={store}>
-      <AppRouter />
+      <App />
     </Provider>
   );
 };
 
 initSocket(() => {
-  ReactDOM.render(<App />, document.getElementById('root'));
+  ReactDOM.render(<Main />, document.getElementById('root'));
 });

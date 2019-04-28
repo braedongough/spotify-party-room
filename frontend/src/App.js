@@ -1,27 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setToken } from './redux/modules/auth';
+import { setToken as setTokenAction } from './redux/modules/auth';
 import spotify, { getToken } from './api/spotifyWebApi';
+import useLogin from './login/useLogin';
+import LoginPage from './login/LoginPage';
 import { socket } from './api/socket';
 import Search from './search/Search';
 
-const App = ({ poopoo }) => {
+const App = ({ setToken }) => {
   const token = getToken();
-  poopoo(token);
-  // if (loggedIn) {
-  //   spotify.getMe().then(res => {
-  //     socket().emit('userJoined', res);
-  //   });
-  // }
+  setToken(token);
+  const loggedIn = useLogin(token);
+  if (loggedIn) {
+    spotify.getMe().then(res => {
+      socket().emit('userJoined', res);
+    });
+  }
 
   socket().on('usersUpdated', userArray => {
     //console.log(userArray);
   });
-  return <Search token={token} />;
+  return loggedIn ? <Search token={token} /> : <LoginPage />;
 };
 
 const mapDispatchToProps = dispatch => ({
-  poopoo: token => dispatch(setToken(token)),
+  setToken: token => dispatch(setTokenAction(token)),
 });
 
 export default connect(
